@@ -1,5 +1,7 @@
 # ACT Overlay
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mythiinaro)
+
 A combat telemetry overlay for FFXIV. Shows live DPS, healing, damage taken, and more while you play. Works with [IINACT](https://www.iinact.com/) on Windows, Linux, and macOS.
 
 ## Overlay URL
