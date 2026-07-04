@@ -456,6 +456,10 @@
   color: var(--heal);
 }
 
+.telemetry-cell--player .telemetry-cell__primary {
+  color: var(--dps);
+}
+
 .telemetry-cell__job {
   font-size: 7px;
   font-weight: 600;

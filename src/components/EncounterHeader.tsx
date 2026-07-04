@@ -19,13 +19,8 @@ interface EncounterHeaderProps {
   onNewFight: () => void
 }
 
-function getTopDamage(combatants: Combatant[]): Combatant | null {
-  return combatants.reduce<Combatant | null>((top, combatant) => {
-    if (!top || combatant.metrics.damage.rate > top.metrics.damage.rate) {
-      return combatant
-    }
-    return top
-  }, null)
+function getPlayerCombatant(combatants: Combatant[]): Combatant | null {
+  return combatants.find((combatant) => combatant.isYou) ?? null
 }
 
 export const EncounterHeader = memo(function EncounterHeader({
@@ -45,7 +40,7 @@ export const EncounterHeader = memo(function EncounterHeader({
   const statusClass = encounter.isActive ? 'encounter__status--live' : 'encounter__status--idle'
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
-  const topDamage = useMemo(() => getTopDamage(combatants), [combatants])
+  const playerCombatant = useMemo(() => getPlayerCombatant(combatants), [combatants])
   const playerCount = combatants.length
   const hasStats =
     encounter.duration > 0 ||
@@ -114,25 +109,25 @@ export const EncounterHeader = memo(function EncounterHeader({
             <span className="telemetry-cell__primary tabular">{formatNumber(encounter.totalHealing)}</span>
             <span className="telemetry-cell__secondary tabular">{formatRate(encounter.rhps)} hps</span>
           </div>
-          <div className="telemetry-cell telemetry-cell--mvp">
-            <span className="telemetry-cell__label">Top DPS</span>
-            {topDamage ? (
+          <div className="telemetry-cell telemetry-cell--player">
+            <span className="telemetry-cell__label">Your DPS</span>
+            {playerCombatant ? (
               <>
-                <span className="telemetry-cell__primary telemetry-cell__primary--name">
-                  {topDamage.name}
+                <span className="telemetry-cell__primary tabular">
+                  {formatRate(playerCombatant.metrics.damage.rate)} dps
                 </span>
                 <span className="telemetry-cell__secondary">
+                  <span className="telemetry-cell__primary--name">{playerCombatant.name}</span>
                   <span
                     className="telemetry-cell__job"
                     style={{
-                      color: getJobColorStyle(topDamage.job).color,
-                      borderColor: getJobColorStyle(topDamage.job).borderColor,
-                      backgroundColor: getJobColorStyle(topDamage.job).backgroundColor,
+                      color: getJobColorStyle(playerCombatant.job).color,
+                      borderColor: getJobColorStyle(playerCombatant.job).borderColor,
+                      backgroundColor: getJobColorStyle(playerCombatant.job).backgroundColor,
                     }}
                   >
-                    {topDamage.job}
+                    {playerCombatant.job}
                   </span>
-                  <span className="tabular">{formatRate(topDamage.metrics.damage.rate)} dps</span>
                 </span>
               </>
             ) : (
