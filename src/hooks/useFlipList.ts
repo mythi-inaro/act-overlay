@@ -8,12 +8,15 @@ export function useFlipList<T extends FlipItem>(
   items: T[],
   listRef: RefObject<HTMLElement | null>,
   resetKey?: string,
+  enabled = true,
 ) {
   const positionsRef = useRef<Map<string, DOMRect>>(new Map())
   const isFirstRender = useRef(true)
   const resetKeyRef = useRef(resetKey)
 
   useLayoutEffect(() => {
+    if (!enabled) return
+
     if (resetKey !== undefined && resetKeyRef.current !== resetKey) {
       resetKeyRef.current = resetKey
       isFirstRender.current = true
@@ -69,5 +72,5 @@ export function useFlipList<T extends FlipItem>(
     for (const id of positionsRef.current.keys()) {
       if (!currentIds.has(id)) positionsRef.current.delete(id)
     }
-  }, [items, listRef, resetKey])
+  }, [enabled, items, listRef, resetKey])
 }

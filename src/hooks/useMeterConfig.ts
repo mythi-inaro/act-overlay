@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { isOverlayMode } from '../lib/combatParser'
 import {
   DASHBOARD_PANEL_ID,
@@ -85,7 +85,11 @@ export function useMeterConfig() {
   const [{ blocks, layout }, setConfig] = useState<OverlayConfig>(resolveInitialConfig)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ blocks, layout }))
+    const timer = window.setTimeout(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ blocks, layout }))
+    }, 250)
+
+    return () => window.clearTimeout(timer)
   }, [blocks, layout])
 
   const setPanelPosition = useCallback((panelId: string, position: PanelPosition) => {
@@ -130,13 +134,13 @@ export function useMeterConfig() {
     setConfig({ blocks: DEFAULT_BLOCKS, layout: defaultLayout(DEFAULT_BLOCKS) })
   }, [])
 
-  const shareUrl = (() => {
+  const shareUrl = useMemo(() => {
     const params = new URLSearchParams(window.location.search)
     params.set('blocks', blocks.map((b) => b.metric).join(','))
     params.set('layout', serializeLayoutParam(layout))
     if (isOverlayMode()) params.set('config', '1')
     return `${window.location.origin}${window.location.pathname}?${params.toString()}`
-  })()
+  }, [blocks, layout])
 
   return {
     blocks,

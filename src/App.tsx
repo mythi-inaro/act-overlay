@@ -32,6 +32,7 @@ function App() {
   const fightSwapping = useFightSwap(selectedFightId)
   const overlayMode = isOverlayMode()
   const configMode = isConfigMode()
+  const liveMode = overlayMode && !configMode
   const {
     blocks,
     layout,
@@ -62,7 +63,9 @@ function App() {
         />
       )}
 
-      <main className={`overlay-canvas ${configMode ? 'overlay-canvas--config' : ''}`}>
+      <main
+        className={`overlay-canvas ${configMode ? 'overlay-canvas--config' : ''} ${liveMode ? 'overlay-canvas--live' : ''}`}
+      >
         <PositionedPanel
           panelId={DASHBOARD_PANEL_ID}
           position={dashboardPosition}
@@ -99,6 +102,7 @@ function App() {
                       panelIndex={index + 1}
                       compact
                       flipResetKey={selectedFightId}
+                      animateRows={configMode}
                       onMetricChange={(metric) => setBlockMetric(block.id, metric)}
                     />
                   </HudPanel>

@@ -67,7 +67,11 @@ export function useFightHistory(
   const skipNextAutoArchiveRef = useRef(false)
 
   useEffect(() => {
-    sessionStorage.setItem(FIGHT_HISTORY_KEY, JSON.stringify(archives))
+    const timer = window.setTimeout(() => {
+      sessionStorage.setItem(FIGHT_HISTORY_KEY, JSON.stringify(archives))
+    }, 250)
+
+    return () => window.clearTimeout(timer)
   }, [archives])
 
   useEffect(() => {
@@ -86,17 +90,17 @@ export function useFightHistory(
   }, [])
 
   useEffect(() => {
-    const wasInCombat = wasInCombatRef.current
-
-    if (wasInCombat === true && inGameCombat === false) {
-      if (skipNextAutoArchiveRef.current) {
-        skipNextAutoArchiveRef.current = false
-      } else {
-        archiveLiveState(lastCombatSnapshotRef.current ?? liveState)
+    if (inGameCombat !== wasInCombatRef.current) {
+      if (wasInCombatRef.current === true && inGameCombat === false) {
+        if (skipNextAutoArchiveRef.current) {
+          skipNextAutoArchiveRef.current = false
+        } else {
+          archiveLiveState(lastCombatSnapshotRef.current ?? liveState)
+        }
       }
-    }
 
-    wasInCombatRef.current = inGameCombat
+      wasInCombatRef.current = inGameCombat
+    }
   }, [archiveLiveState, inGameCombat, liveState])
 
   const displayState = useMemo(() => {
@@ -123,7 +127,7 @@ export function useFightHistory(
     setSelectedId('live')
   }, [archiveLiveState, liveState])
 
-  const liveSummary = buildFightSummary(liveState)
+  const liveSummary = useMemo(() => buildFightSummary(liveState), [liveState])
 
   return {
     displayState,

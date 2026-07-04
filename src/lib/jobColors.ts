@@ -101,7 +101,9 @@ export interface JobColorStyle {
   barGlow: string
 }
 
-export function getJobColorStyle(job: string): JobColorStyle {
+const jobStyleCache = new Map<string, JobColorStyle>()
+
+function buildJobColorStyle(job: string): JobColorStyle {
   const color = getJobColor(job)
   const { r, g, b } = hexToRgb(color)
   const light = relativeLuminance(color) > 0.65
@@ -113,4 +115,14 @@ export function getJobColorStyle(job: string): JobColorStyle {
     barBackground: `linear-gradient(90deg, rgba(${r}, ${g}, ${b}, 0.95), rgba(${r}, ${g}, ${b}, 0.35))`,
     barGlow: `0 0 8px rgba(${r}, ${g}, ${b}, 0.55)`,
   }
+}
+
+export function getJobColorStyle(job: string): JobColorStyle {
+  const code = normalizeJobCode(job)
+  const cached = jobStyleCache.get(code)
+  if (cached) return cached
+
+  const style = buildJobColorStyle(job)
+  jobStyleCache.set(code, style)
+  return style
 }

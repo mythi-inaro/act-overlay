@@ -24,6 +24,35 @@
     );
 }
 
+/* In-game overlay: skip expensive GPU effects and entrance animations */
+.overlay-canvas--live .hud-panel,
+.overlay-canvas--live .positioned-panel {
+  animation: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.overlay-canvas--live .hud-panel {
+  contain: layout style paint;
+}
+
+.overlay-canvas--live .metric-meter__list {
+  contain: layout style;
+}
+
+.overlay-canvas--live .metric-bar__fill--job {
+  box-shadow: none;
+}
+
+.overlay-canvas--live .encounter__live-dot {
+  animation: none;
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.overlay-canvas--live .dashboard--swap .dashboard__body {
+  animation: none;
+}
+
 .positioned-panel {
   position: absolute;
   width: 380px;

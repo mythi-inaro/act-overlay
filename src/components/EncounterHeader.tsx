@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import type { Combatant, EncounterState } from '../types/combat'
 import type { FightRecord, FightSelection } from '../types/fights'
 import { formatDuration, formatNumber, formatRate } from '../lib/formatNumbers'
@@ -28,7 +28,7 @@ function getTopDamage(combatants: Combatant[]): Combatant | null {
   }, null)
 }
 
-export function EncounterHeader({
+export const EncounterHeader = memo(function EncounterHeader({
   encounter,
   combatants,
   liveSummary,
@@ -157,4 +157,4 @@ export function EncounterHeader({
       )}
     </div>
   )
-}
+})

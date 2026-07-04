@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { EMPTY_STATE, parseCombatData } from '../lib/combatParser'
+import { overlayStateEqual } from '../lib/stateEquality'
 import type { EncounterState, OverlayState } from '../types/combat'
 import type {
   ChangePrimaryPlayerEvent,
@@ -53,12 +54,19 @@ export function useOverlayPlugin(): {
   const playerNameRef = useRef<string | null>(null)
   const inGameCombatRef = useRef<boolean | null>(null)
   const frozenEncounterRef = useRef<EncounterState | null>(null)
+  const stateRef = useRef<OverlayState>(EMPTY_STATE)
+
+  const commitState = (next: OverlayState) => {
+    if (overlayStateEqual(stateRef.current, next)) return
+    stateRef.current = next
+    setState(next)
+  }
 
   useEffect(() => {
     const onCombatData = (data: unknown) => {
       const parsed = parseCombatData(data as CombatDataEvent, playerNameRef.current)
 
-      setState(
+      commitState(
         applyCombatPresence(parsed, inGameCombatRef.current, frozenEncounterRef.current),
       )
     }
@@ -73,23 +81,21 @@ export function useOverlayPlugin(): {
 
       if (event.inGameCombat) {
         frozenEncounterRef.current = null
-        setState((prev) => ({
-          ...prev,
-          encounter: { ...prev.encounter, isActive: true },
-        }))
+        commitState({
+          ...stateRef.current,
+          encounter: { ...stateRef.current.encounter, isActive: true },
+        })
         return
       }
 
       if (wasInCombat !== false) {
-        setState((prev) => {
-          frozenEncounterRef.current = {
-            ...prev.encounter,
-            isActive: false,
-          }
-          return {
-            ...prev,
-            encounter: frozenEncounterRef.current!,
-          }
+        frozenEncounterRef.current = {
+          ...stateRef.current.encounter,
+          isActive: false,
+        }
+        commitState({
+          ...stateRef.current,
+          encounter: frozenEncounterRef.current,
         })
       }
     }
