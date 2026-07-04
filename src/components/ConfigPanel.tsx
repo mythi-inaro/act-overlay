@@ -31,6 +31,7 @@ export function ConfigPanel({
 
   return (
     <aside className="config-panel">
+      <span className="config-panel__rail" aria-hidden />
       <div className="config-panel__header">
         <span className="hud-label">Meter Blocks</span>
         <button type="button" className="config-panel__reset" onClick={onReset}>

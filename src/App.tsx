@@ -74,9 +74,9 @@ function App() {
           wide
           onPositionChange={setPanelPosition}
         >
-          <div className={`dashboard ${fightSwapping ? 'dashboard--swap' : ''}`}>
-            <div className="dashboard__body">
-              <HudPanel index={0} className="dashboard__encounter">
+          <HudPanel index={0} className="telemetry-shell">
+            <div className={`telemetry-shell__body ${fightSwapping ? 'telemetry-shell__body--swap' : ''}`}>
+              <header className="telemetry-shell__encounter">
                 <EncounterHeader
                   encounter={displayState.encounter}
                   combatants={displayState.combatants}
@@ -90,11 +90,16 @@ function App() {
                   onSelectFight={selectFight}
                   onNewFight={startNewFight}
                 />
-              </HudPanel>
+              </header>
 
-              <div className="meter-row">
+              <div className="telemetry-grid">
                 {visibleBlocks.map((block, index) => (
-                  <HudPanel key={block.id} index={index + 1} className="meter-row__panel">
+                  <section
+                    key={block.id}
+                    className="telemetry-column"
+                    data-metric={block.metric}
+                    style={{ '--metric-i': index } as React.CSSProperties}
+                  >
                     <MetricMeter
                       metric={block.metric}
                       encounter={displayState.encounter}
@@ -105,11 +110,11 @@ function App() {
                       animateRows={configMode}
                       onMetricChange={(metric) => setBlockMetric(block.id, metric)}
                     />
-                  </HudPanel>
+                  </section>
                 ))}
               </div>
             </div>
-          </div>
+          </HudPanel>
         </PositionedPanel>
       </main>
 

@@ -1,49 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
 :root {
   /* Obsidian Telemetry palette */
   --void: #050508;
   --void-elevated: #0c0c12;
-  --surface-panel: rgba(8, 8, 14, 0.88);
-  --surface: rgba(8, 8, 14, 0.88);
-  --surface-raised: rgba(0, 0, 0, 0.42);
-  --surface-hover: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.16);
-  --border-bright: rgba(0, 229, 195, 0.45);
+  --surface-panel: rgba(6, 6, 11, 0.92);
+  --surface: rgba(6, 6, 11, 0.92);
+  --surface-raised: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.07);
+  --surface-row: rgba(0, 0, 0, 0.22);
+  --border: rgba(255, 255, 255, 0.14);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-bright: rgba(0, 229, 195, 0.42);
 
   --text-primary: #f4f6f8;
-  --text-secondary: rgba(244, 246, 248, 0.82);
-  --text-muted: rgba(244, 246, 248, 0.58);
+  --text-secondary: rgba(244, 246, 248, 0.88);
+  --text-muted: rgba(244, 246, 248, 0.68);
 
-  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 
   --accent: #00e5c3;
-  --accent-glow: rgba(0, 229, 195, 0.45);
-  --accent-dim: rgba(0, 229, 195, 0.18);
+  --accent-glow: rgba(0, 229, 195, 0.4);
+  --accent-dim: rgba(0, 229, 195, 0.12);
+  --accent-rail: rgba(0, 229, 195, 0.85);
 
   --dps: #ff6b35;
-  --dps-glow: rgba(255, 107, 53, 0.5);
+  --dps-glow: rgba(255, 107, 53, 0.45);
   --heal: #4ade80;
-  --heal-glow: rgba(74, 222, 128, 0.4);
+  --heal-glow: rgba(74, 222, 128, 0.38);
   --tank: #60a5fa;
-  --tank-glow: rgba(96, 165, 250, 0.4);
+  --tank-glow: rgba(96, 165, 250, 0.38);
   --taken: #f43f5e;
-  --taken-glow: rgba(244, 63, 94, 0.45);
+  --taken-glow: rgba(244, 63, 94, 0.42);
   --heals-taken: #38bdf8;
-  --heals-taken-glow: rgba(56, 189, 248, 0.4);
+  --heals-taken-glow: rgba(56, 189, 248, 0.38);
 
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: 'Figtree', system-ui, sans-serif;
+  --font-display: var(--font-sans);
+
+  /* HUD type ramp (fixed px — overlay density, not web body scale) */
+  --type-display: 13px;
+  --type-data: 10px;
+  --type-data-sm: 9px;
+  --type-label: 8px;
+  --type-caption: 7px;
 
   --radius-chamfer: 0px;
-  --blur-glass: 24px;
+  --blur-glass: 20px;
   --shadow-panel:
-    0 4px 24px rgba(0, 0, 0, 0.75),
-    0 8px 40px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 2px 16px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 150ms;
-  --duration-normal: 280ms;
-  --duration-slow: 600ms;
+  --duration-normal: 220ms;
+  --duration-slow: 480ms;
+
+  --z-overlay: 1;
+  --z-drag: 20;
+  --z-config: 30;
+  --z-menu: 100;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -70,12 +86,16 @@ body,
 }
 
 body {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.35;
+  font-family: var(--font-sans);
+  font-size: var(--type-data);
+  line-height: 1.42;
   color: var(--text-primary);
   background: transparent;
   -webkit-font-smoothing: antialiased;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+  font-variant-numeric: tabular-nums lining-nums;
   overflow: hidden;
 }
 
@@ -142,7 +162,7 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dashboard--swap .dashboard__body {
+  .telemetry-shell__body--swap {
     animation: none;
   }
 }

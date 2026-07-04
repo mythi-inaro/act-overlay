@@ -54,27 +54,6 @@ Run `/iinact` in-game, select your overlay URL from the list, and paste it into 
 
 Pull aggro in a training dummy and the DPS meter should populate within a second of entering combat.
 
-## Publish to GitHub
-
-### First-time setup
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: ACT overlay for IINACT"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
-```
-
-### Enable GitHub Pages
-
-1. Go to **Settings → Pages**
-2. Under **Build and deployment**, set Source to **GitHub Actions**
-3. Push to `main` — the deploy workflow builds and publishes automatically
-
-Your overlay will be live at `https://<your-username>.github.io/<repo-name>/` within a minute or two.
-
 ### Configure meter blocks
 
 Each panel can show a different metric. Available metrics:
@@ -121,7 +100,7 @@ This overlay uses [OverlayPlugin's common.min.js](https://overlayplugin.github.i
 
 ## Design
 
-**Obsidian Telemetry HUD** — void black glass panels, electric mint accents, role-colored DPS bars, Syne + IBM Plex Mono typography.
+**Obsidian Telemetry HUD** — void black glass panels, electric mint accents, role-colored DPS bars, Figtree typography.
 
 ## License
 

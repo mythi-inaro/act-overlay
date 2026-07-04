@@ -103,27 +103,27 @@ export const EncounterHeader = memo(function EncounterHeader({
       </div>
 
       {hasStats && (
-        <div className="encounter__stats">
-          <div className="encounter__stat encounter__stat--dmg">
-            <span className="encounter__stat-label">Damage</span>
-            <span className="encounter__stat-value tabular">{formatNumber(encounter.totalDamage)}</span>
-            <span className="encounter__stat-rate tabular">{formatRate(encounter.rdps)} dps</span>
+        <div className="encounter__telemetry" role="group" aria-label="Encounter totals">
+          <div className="telemetry-cell telemetry-cell--dmg">
+            <span className="telemetry-cell__label">Damage</span>
+            <span className="telemetry-cell__primary tabular">{formatNumber(encounter.totalDamage)}</span>
+            <span className="telemetry-cell__secondary tabular">{formatRate(encounter.rdps)} dps</span>
           </div>
-          <div className="encounter__stat encounter__stat--heal">
-            <span className="encounter__stat-label">Healing</span>
-            <span className="encounter__stat-value tabular">{formatNumber(encounter.totalHealing)}</span>
-            <span className="encounter__stat-rate tabular">{formatRate(encounter.rhps)} hps</span>
+          <div className="telemetry-cell telemetry-cell--heal">
+            <span className="telemetry-cell__label">Healing</span>
+            <span className="telemetry-cell__primary tabular">{formatNumber(encounter.totalHealing)}</span>
+            <span className="telemetry-cell__secondary tabular">{formatRate(encounter.rhps)} hps</span>
           </div>
-          <div className="encounter__stat encounter__stat--mvp">
-            <span className="encounter__stat-label">Top DPS</span>
+          <div className="telemetry-cell telemetry-cell--mvp">
+            <span className="telemetry-cell__label">Top DPS</span>
             {topDamage ? (
               <>
-                <span className="encounter__stat-value encounter__stat-value--name">
+                <span className="telemetry-cell__primary telemetry-cell__primary--name">
                   {topDamage.name}
                 </span>
-                <span className="encounter__stat-rate">
+                <span className="telemetry-cell__secondary">
                   <span
-                    className="encounter__stat-job"
+                    className="telemetry-cell__job"
                     style={{
                       color: getJobColorStyle(topDamage.job).color,
                       borderColor: getJobColorStyle(topDamage.job).borderColor,
@@ -136,7 +136,7 @@ export const EncounterHeader = memo(function EncounterHeader({
                 </span>
               </>
             ) : (
-              <span className="encounter__stat-value encounter__stat-value--empty">—</span>
+              <span className="telemetry-cell__primary telemetry-cell__primary--empty">—</span>
             )}
           </div>
         </div>
