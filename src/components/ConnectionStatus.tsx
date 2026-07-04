@@ -1,17 +1,25 @@
 interface ConnectionStatusProps {
   connected: boolean
   overlayMode: boolean
+  demoMode: boolean
   visible: boolean
 }
 
-export function ConnectionStatus({ connected, overlayMode, visible }: ConnectionStatusProps) {
+export function ConnectionStatus({
+  connected,
+  overlayMode,
+  demoMode,
+  visible,
+}: ConnectionStatusProps) {
   if (!visible) return null
 
-  const label = overlayMode
-    ? connected
-      ? 'IINACT Connected'
-      : 'Connecting…'
-    : 'Demo Mode'
+  const label = demoMode
+    ? 'Demo Mode'
+    : overlayMode
+      ? connected
+        ? 'IINACT Connected'
+        : 'Connecting…'
+      : 'Not Connected'
 
   return (
     <div

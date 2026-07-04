@@ -8,7 +8,7 @@ import { useFightHistory } from './hooks/useFightHistory'
 import { useFightSwap } from './hooks/useFightSwap'
 import { useMeterConfig } from './hooks/useMeterConfig'
 import { useOverlayPlugin } from './hooks/useOverlayPlugin'
-import { isConfigMode, isOverlayMode } from './lib/combatParser'
+import { isConfigMode, isDemoMode, isOverlayMode } from './lib/combatParser'
 import { DASHBOARD_PANEL_ID, defaultLayout } from './types/layout'
 import { VISIBLE_METER_COUNT } from './types/metrics'
 import './styles/hud.css'
@@ -32,7 +32,8 @@ function App() {
   const fightSwapping = useFightSwap(selectedFightId)
   const overlayMode = isOverlayMode()
   const configMode = isConfigMode()
-  const liveMode = overlayMode && !configMode
+  const demoMode = isDemoMode()
+  const liveMode = overlayMode && !configMode && !demoMode
   const {
     blocks,
     layout,
@@ -121,7 +122,8 @@ function App() {
       <ConnectionStatus
         connected={liveState.connected}
         overlayMode={overlayMode}
-        visible={configMode}
+        demoMode={demoMode}
+        visible={configMode || demoMode}
       />
     </>
   )

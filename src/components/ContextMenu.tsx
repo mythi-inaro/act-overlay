@@ -59,7 +59,10 @@ export function ContextMenu({ x, y, onClose, ariaLabel, label, children }: Conte
       if (event.key === 'Escape') onClose()
     }
 
-    const handleScroll = () => onClose()
+    const handleScroll = (event: Event) => {
+      if (menuRef.current?.contains(event.target as Node)) return
+      onClose()
+    }
 
     document.addEventListener('mousedown', handlePointerDown)
     document.addEventListener('keydown', handleKeyDown)

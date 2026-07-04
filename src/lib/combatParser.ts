@@ -146,6 +146,10 @@ export function isConfigMode(): boolean {
   return new URLSearchParams(window.location.search).get('config') === '1'
 }
 
+export function isDemoMode(): boolean {
+  return new URLSearchParams(window.location.search).get('demo') === '1'
+}
+
 export const EMPTY_STATE: OverlayState = {
   connected: false,
   encounter: {

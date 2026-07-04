@@ -52,6 +52,28 @@ Run `/iinact` in-game, choose this overlay from the list, and paste the URL into
 
 Hit a training dummy and enter combat — meters should populate within a second.
 
+## Demo mode
+
+Preview the meters without IINACT by adding `?demo=1` to the URL:
+
+```
+https://mythi-inaro.github.io/act-overlay/?demo=1
+```
+
+For local development:
+
+```
+http://localhost:5173/?demo=1
+```
+
+Demo mode simulates an active 8-player fight with sample DPS, healing, damage taken, and heals taken data. Combine with config mode to reposition blocks or change metrics:
+
+```
+https://mythi-inaro.github.io/act-overlay/?demo=1&config=1
+```
+
+Remove `?demo=1` before using the overlay in-game with IINACT.
+
 ## Customize your meters
 
 ### Available metrics
@@ -100,8 +122,9 @@ https://mythi-inaro.github.io/act-overlay/?OVERLAY_WS=ws://127.0.0.1:10501/ws&bl
 | Overlay is blank | Confirm IINACT is running and logging filter is at least **Party** |
 | "Connecting…" never goes away | Check that `?OVERLAY_WS=ws://127.0.0.1:10501/ws` is in your URL |
 | Proxy URL from `/iinact` fails | Use the [direct overlay URL](#overlay-url) instead |
-| Meters empty outside combat | Normal — data only appears during encounters |
+| Meters empty outside combat | Normal — data only appears during encounters (use [demo mode](#demo-mode) to preview without combat) |
 | Config handles visible in-game | Remove `&config=1` from your URL |
+| Demo data still showing in-game | Remove `&demo=1` from your URL |
 
 ## Support
 

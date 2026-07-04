@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { EMPTY_STATE, parseCombatData } from '../lib/combatParser'
+import { buildDemoState } from '../lib/demoData'
+import { EMPTY_STATE, isDemoMode, parseCombatData } from '../lib/combatParser'
 import { overlayStateEqual } from '../lib/stateEquality'
 import type { EncounterState, OverlayState } from '../types/combat'
 import type {
@@ -49,12 +50,17 @@ export function useOverlayPlugin(): {
   state: OverlayState
   inGameCombat: boolean | null
 } {
-  const [state, setState] = useState<OverlayState>(EMPTY_STATE)
-  const [inGameCombat, setInGameCombat] = useState<boolean | null>(null)
-  const playerNameRef = useRef<string | null>(null)
-  const inGameCombatRef = useRef<boolean | null>(null)
+  const demoMode = isDemoMode()
+  const [state, setState] = useState<OverlayState>(() =>
+    demoMode ? buildDemoState(142) : EMPTY_STATE,
+  )
+  const [inGameCombat, setInGameCombat] = useState<boolean | null>(() =>
+    demoMode ? true : null,
+  )
+  const playerNameRef = useRef<string | null>(demoMode ? 'Adventurer' : null)
+  const inGameCombatRef = useRef<boolean | null>(demoMode ? true : null)
   const frozenEncounterRef = useRef<EncounterState | null>(null)
-  const stateRef = useRef<OverlayState>(EMPTY_STATE)
+  const stateRef = useRef<OverlayState>(state)
 
   const commitState = (next: OverlayState) => {
     if (overlayStateEqual(stateRef.current, next)) return
@@ -63,6 +69,20 @@ export function useOverlayPlugin(): {
   }
 
   useEffect(() => {
+    if (!demoMode) return
+
+    const start = Date.now() - 142_000
+    const tick = () => {
+      commitState(buildDemoState((Date.now() - start) / 1000))
+    }
+
+    tick()
+    const timer = window.setInterval(tick, 1000)
+    return () => window.clearInterval(timer)
+  }, [demoMode])
+
+  useEffect(() => {
+    if (demoMode) return
     const onCombatData = (data: unknown) => {
       const parsed = parseCombatData(data as CombatDataEvent, playerNameRef.current)
 
@@ -128,7 +148,7 @@ export function useOverlayPlugin(): {
       window.removeOverlayListener?.('InCombat', onInCombat)
       window.removeOverlayListener?.('ChangePrimaryPlayer', onPrimaryPlayer)
     }
-  }, [])
+  }, [demoMode])
 
   return { state, inGameCombat }
 }
