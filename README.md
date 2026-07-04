@@ -1,28 +1,28 @@
 # ACT Overlay
 
-Hyper-modern combat telemetry overlay for FFXIV, compatible with [IINACT](https://www.iinact.com/) and ACT OverlayPlugin.
+A combat telemetry overlay for FFXIV. Shows live DPS, healing, damage taken, and more while you play. Works with [IINACT](https://www.iinact.com/) on Windows, Linux, and macOS.
 
-## Live demo
+## Overlay URL
 
-After publishing to GitHub Pages, your overlay URL will be:
+Use this URL in your in-game overlay plugin:
 
 ```
-https://<your-username>.github.io/<repo-name>/?OVERLAY_WS=ws://127.0.0.1:10501/ws
+https://mythi-inaro.github.io/act-overlay/?OVERLAY_WS=ws://127.0.0.1:10501/ws
 ```
 
-The `?OVERLAY_WS=ws://127.0.0.1:10501/ws` suffix is required — it connects the overlay to IINACT's WebSocket server.
+The `?OVERLAY_WS=ws://127.0.0.1:10501/ws` part is required — it connects the overlay to IINACT on your PC.
 
-## Use in FFXIV with IINACT
+## Setup
 
 ### 1. Install IINACT
 
-1. Add the IINACT repo in Dalamud: `https://raw.githubusercontent.com/marzent/IINACT/main/repo.json`
+1. In Dalamud, add the IINACT repo: `https://raw.githubusercontent.com/marzent/IINACT/main/repo.json`
 2. Install and enable **IINACT** from the plugin installer
-3. Set logging filter to at least **Party** so combat data is captured
+3. Set the logging filter to at least **Party** so combat data is captured
 
-See [IINACT installation guide](https://www.iinact.com/installation/) for details.
+Full instructions: [IINACT installation guide](https://www.iinact.com/installation/)
 
-### 2. Install an overlay renderer
+### 2. Install an overlay plugin
 
 | Platform | Plugin |
 |----------|--------|
@@ -30,78 +30,79 @@ See [IINACT installation guide](https://www.iinact.com/installation/) for detail
 | Linux | [HUDKit](https://github.com/anko/hudkit) |
 | macOS | [BunnyHUD](https://github.com/marzent/Bunny-HUD) |
 
-### 3. Add this overlay
+### 3. Add the overlay
 
-**Option A — paste the URL manually**
+**Option A — paste the URL**
 
-In your overlay renderer (e.g. Browsingway `/bw config`), create a new inlay with:
+In your overlay plugin (e.g. Browsingway `/bw config`), create a new inlay and paste the [overlay URL](#overlay-url) above.
 
-```
-https://<your-username>.github.io/<repo-name>/?OVERLAY_WS=ws://127.0.0.1:10501/ws
-```
+**Option B — use IINACT's picker**
 
-**Option B — use IINACT's overlay generator**
+Run `/iinact` in-game, choose this overlay from the list, and paste the URL into your overlay plugin.
 
-Run `/iinact` in-game, select your overlay URL from the list, and paste it into Browsingway/HUDKit.
-
-> If IINACT generates a proxy URL and the overlay doesn't connect, use the direct GitHub Pages URL with the `OVERLAY_WS` parameter instead.
+> If IINACT gives you a proxy URL and the overlay does not connect, use the direct URL from the [Overlay URL](#overlay-url) section instead.
 
 ### 4. Configure the inlay
 
-- Set background to **transparent**
-- Position and resize as needed
-- Lock the overlay when you're happy with placement
+- Set the background to **transparent**
+- Position and resize the overlay where you want it
+- **Lock** the overlay when placement looks good
 
-Pull aggro in a training dummy and the DPS meter should populate within a second of entering combat.
+Hit a training dummy and enter combat — meters should populate within a second.
 
-### Configure meter blocks
+## Customize your meters
 
-Each panel can show a different metric. Available metrics:
+### Available metrics
 
-| Metric | Rate | Description |
-|--------|------|-------------|
-| `damage` | DPS | Damage dealt |
-| `healing` | HPS | Healing done |
-| `damageTaken` | DTPS | Damage taken |
-| `healsTaken` | HTPS | Healing received |
+| Metric | Shows as | What it tracks |
+|--------|----------|----------------|
+| Damage | DPS | Damage dealt |
+| Healing | HPS | Healing done |
+| Damage Taken | DTPS | Damage taken |
+| Heals Taken | HTPS | Healing received |
 
-**URL config** — pass blocks and layout as query params:
+By default you get **Damage** and **Healing** side by side under the encounter header.
 
-```
-...&blocks=damage,healing,damageTaken&layout=79.0,2.2;79.0,18.0;79.0,42.0
-```
+### Config mode
 
-Layout pairs are `x,y` percentages (semicolon-separated): first pair is the encounter header, then each block in order.
-
-**Config mode** — append `&config=1` only when you want the editor and drag handles visible:
+To move panels, change metrics, or copy a shareable setup URL, open config mode by adding `&config=1` to your overlay URL:
 
 ```
-...?OVERLAY_WS=ws://127.0.0.1:10501/ws&config=1
+https://mythi-inaro.github.io/act-overlay/?OVERLAY_WS=ws://127.0.0.1:10501/ws&config=1
 ```
 
-Remove `config=1` from your in-game URL once layout is done. Config is saved to `localStorage` between sessions.
+In config mode you can:
 
-Default blocks: **Damage** + **Healing**.
+- **Drag** the overlay handle to reposition
+- **Right-click** a meter to change its metric
+- **Right-click** the encounter header to browse fight history
+- Copy a **share URL** with your layout saved
 
-## Local development
+Remove `&config=1` from your in-game URL once you are done. Your layout is saved in the browser automatically.
 
-```bash
-npm install
-npm run dev
+### Share a layout via URL
+
+You can pass metrics and positions directly in the URL:
+
+```
+https://mythi-inaro.github.io/act-overlay/?OVERLAY_WS=ws://127.0.0.1:10501/ws&blocks=damage,healing,damageTaken&layout=79.0,2.2;79.0,18.0;79.0,42.0
 ```
 
-Open `http://localhost:5173/?OVERLAY_WS=ws://127.0.0.1:10501/ws` with IINACT running to test locally.
+- `blocks` — comma-separated metrics (`damage`, `healing`, `damageTaken`, `healsTaken`)
+- `layout` — position pairs as `x,y` percentages, separated by `;` (encounter header first, then each meter block)
 
-The overlay only displays live combat data from IINACT — there is no mock/demo mode.
+## Troubleshooting
 
-## How it works
+| Problem | Try this |
+|---------|----------|
+| Overlay is blank | Confirm IINACT is running and logging filter is at least **Party** |
+| "Connecting…" never goes away | Check that `?OVERLAY_WS=ws://127.0.0.1:10501/ws` is in your URL |
+| Proxy URL from `/iinact` fails | Use the [direct overlay URL](#overlay-url) instead |
+| Meters empty outside combat | Normal — data only appears during encounters |
+| Config handles visible in-game | Remove `&config=1` from your URL |
 
-This overlay uses [OverlayPlugin's common.min.js](https://overlayplugin.github.io/OverlayPlugin/devs/) to subscribe to `CombatData` events over IINACT's WebSocket (`ws://127.0.0.1:10501/ws`). Combat data updates once per second while in combat.
+## Support
 
-## Design
+If this overlay is useful to you, consider buying me a coffee:
 
-**Obsidian Telemetry HUD** — void black glass panels, electric mint accents, role-colored DPS bars, Figtree typography.
-
-## License
-
-MIT
+**[ko-fi.com/mythiinaro](https://ko-fi.com/mythiinaro)**
