@@ -8,6 +8,7 @@ function encounterEqual(a: EncounterState, b: EncounterState): boolean {
     a.totalHealing === b.totalHealing &&
     a.rdps === b.rdps &&
     a.rhps === b.rhps &&
+    a.totalDeaths === b.totalDeaths &&
     a.isActive === b.isActive
   )
 }
@@ -26,6 +27,7 @@ function combatantEqual(a: Combatant, b: Combatant): boolean {
     a.job === b.job &&
     a.role === b.role &&
     a.isYou === b.isYou &&
+    a.deaths === b.deaths &&
     metricSnapshotEqual(a.metrics.damage, b.metrics.damage) &&
     metricSnapshotEqual(a.metrics.healing, b.metrics.healing) &&
     metricSnapshotEqual(a.metrics.damageTaken, b.metrics.damageTaken) &&

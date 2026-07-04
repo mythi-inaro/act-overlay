@@ -42,11 +42,15 @@ export const EncounterHeader = memo(function EncounterHeader({
 
   const playerCombatant = useMemo(() => getPlayerCombatant(combatants), [combatants])
   const playerCount = combatants.length
+  const totalDeaths = encounter.totalDeaths ?? 0
+  const playerDeaths = playerCombatant?.deaths ?? 0
+  const deathLabel = totalDeaths === 1 ? 'death' : 'deaths'
   const hasStats =
     encounter.duration > 0 ||
     encounter.totalDamage > 0 ||
     encounter.totalHealing > 0 ||
     playerCount > 0
+  const showDeathCounter = hasStats || totalDeaths > 0
 
   const handleContextMenu = useCallback((event: React.MouseEvent) => {
     event.preventDefault()
@@ -79,6 +83,17 @@ export const EncounterHeader = memo(function EncounterHeader({
               <>
                 <span className="encounter__meta-sep" aria-hidden>·</span>
                 <span className="encounter__meta-item">{playerCount} tracked</span>
+              </>
+            )}
+            {showDeathCounter && (
+              <>
+                <span className="encounter__meta-sep" aria-hidden>·</span>
+                <span
+                  className={`encounter__meta-item encounter__meta-item--deaths tabular ${totalDeaths > 0 ? 'encounter__meta-item--deaths-active' : ''}`}
+                  title={playerDeaths > 0 ? `You: ${playerDeaths} ${playerDeaths === 1 ? 'death' : 'deaths'}` : 'Party deaths this pull'}
+                >
+                  {totalDeaths} {deathLabel}
+                </span>
               </>
             )}
           </div>

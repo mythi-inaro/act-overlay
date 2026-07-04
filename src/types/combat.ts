@@ -6,6 +6,7 @@ export interface Combatant {
   job: string
   role: JobRole
   isYou?: boolean
+  deaths: number
   metrics: {
     damage: MetricSnapshot
     healing: MetricSnapshot
@@ -27,6 +28,7 @@ export interface EncounterState {
   totalHealing: number
   rdps: number
   rhps: number
+  totalDeaths: number
   isActive: boolean
 }
 

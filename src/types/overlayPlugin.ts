@@ -12,6 +12,7 @@ export interface OverlayCombatant {
   damagetaken?: string | number
   healstaken?: string | number
   isYou?: boolean
+  deaths?: string | number
 }
 
 export interface OverlayEncounter {

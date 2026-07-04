@@ -81,6 +81,7 @@ function mapCombatant(
     isYou: playerName
       ? name === playerName || name === 'YOU'
       : Boolean(raw.isYou),
+    deaths: parseNumber(raw.deaths),
     metrics: {
       damage: snapshot(
         parseNumber(raw.encdps ?? raw.ENCDPS),
@@ -123,6 +124,8 @@ export function parseCombatData(
     parseNumber(encounter.healed) ||
     combatants.reduce((sum, c) => sum + c.metrics.healing.total, 0)
 
+  const totalDeaths = combatants.reduce((sum, c) => sum + c.deaths, 0)
+
   return {
     connected: true,
     encounter: {
@@ -132,6 +135,7 @@ export function parseCombatData(
       totalHealing,
       rdps: parseNumber(encounter.ENCDPS ?? encounter.encdps),
       rhps: parseNumber(encounter.ENCHPS ?? encounter.enchps),
+      totalDeaths,
       isActive: parseBoolean(data.isActive),
     },
     combatants: combatants.filter(hasAnyMetric),
@@ -159,6 +163,7 @@ export const EMPTY_STATE: OverlayState = {
     totalHealing: 0,
     rdps: 0,
     rhps: 0,
+    totalDeaths: 0,
     isActive: false,
   },
   combatants: [],

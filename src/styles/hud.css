@@ -351,6 +351,17 @@
   color: var(--text-muted);
 }
 
+.encounter__meta-item--deaths {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.encounter__meta-item--deaths-active {
+  color: var(--taken);
+}
+
 .encounter__meta-sep {
   opacity: 0.4;
 }

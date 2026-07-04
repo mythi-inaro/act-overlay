@@ -10,18 +10,19 @@ interface DemoCombatantSeed {
   hps: number
   dtps: number
   htps: number
+  deaths: number
   phase: number
 }
 
 const DEMO_PARTY: DemoCombatantSeed[] = [
-  { id: 'you', name: 'Adventurer', job: 'DNC', role: 'dps', isYou: true, dps: 10234, hps: 0, dtps: 820, htps: 450, phase: 0 },
-  { id: 'war', name: 'Hrothgar McRoar', job: 'WAR', role: 'tank', dps: 4180, hps: 0, dtps: 4820, htps: 2100, phase: 0.6 },
-  { id: 'whm', name: 'Pure White', job: 'WHM', role: 'healer', dps: 2140, hps: 8520, dtps: 640, htps: 1200, phase: 1.2 },
-  { id: 'blm', name: 'Dot Caster', job: 'BLM', role: 'dps', dps: 14580, hps: 0, dtps: 710, htps: 380, phase: 1.8 },
-  { id: 'sam', name: 'Big Numbers', job: 'SAM', role: 'dps', dps: 13820, hps: 0, dtps: 890, htps: 420, phase: 2.4 },
-  { id: 'brd', name: 'Song Guy', job: 'BRD', role: 'dps', dps: 11240, hps: 1240, dtps: 760, htps: 510, phase: 3.0 },
-  { id: 'rdm', name: 'Rez Bot', job: 'RDM', role: 'dps', dps: 10860, hps: 3180, dtps: 680, htps: 890, phase: 3.6 },
-  { id: 'sge', name: 'Sage Green', job: 'SGE', role: 'healer', dps: 1820, hps: 7240, dtps: 590, htps: 980, phase: 4.2 },
+  { id: 'you', name: 'Adventurer', job: 'DNC', role: 'dps', isYou: true, dps: 10234, hps: 0, dtps: 820, htps: 450, deaths: 1, phase: 0 },
+  { id: 'war', name: 'Hrothgar McRoar', job: 'WAR', role: 'tank', dps: 4180, hps: 0, dtps: 4820, htps: 2100, deaths: 2, phase: 0.6 },
+  { id: 'whm', name: 'Pure White', job: 'WHM', role: 'healer', dps: 2140, hps: 8520, dtps: 640, htps: 1200, deaths: 0, phase: 1.2 },
+  { id: 'blm', name: 'Dot Caster', job: 'BLM', role: 'dps', dps: 14580, hps: 0, dtps: 710, htps: 380, deaths: 1, phase: 1.8 },
+  { id: 'sam', name: 'Big Numbers', job: 'SAM', role: 'dps', dps: 13820, hps: 0, dtps: 890, htps: 420, deaths: 0, phase: 2.4 },
+  { id: 'brd', name: 'Song Guy', job: 'BRD', role: 'dps', dps: 11240, hps: 1240, dtps: 760, htps: 510, deaths: 0, phase: 3.0 },
+  { id: 'rdm', name: 'Rez Bot', job: 'RDM', role: 'dps', dps: 10860, hps: 3180, dtps: 680, htps: 890, deaths: 0, phase: 3.6 },
+  { id: 'sge', name: 'Sage Green', job: 'SGE', role: 'healer', dps: 1820, hps: 7240, dtps: 590, htps: 980, deaths: 0, phase: 4.2 },
 ]
 
 const ENCOUNTER_TITLE = 'The Ruby Weapon (Extreme)'
@@ -47,6 +48,7 @@ function buildCombatant(seed: DemoCombatantSeed, elapsed: number): Combatant {
     job: seed.job,
     role: seed.role,
     isYou: seed.isYou,
+    deaths: seed.deaths,
     metrics: {
       damage: snapshot(dps, dps * duration, 0),
       healing: snapshot(hps, hps * duration, 0),
@@ -77,6 +79,7 @@ export function buildDemoState(elapsedSeconds: number): OverlayState {
 
   const totalDamage = combatants.reduce((sum, c) => sum + c.metrics.damage.total, 0)
   const totalHealing = combatants.reduce((sum, c) => sum + c.metrics.healing.total, 0)
+  const totalDeaths = combatants.reduce((sum, c) => sum + c.deaths, 0)
   const safeDuration = Math.max(duration, 1)
 
   return {
@@ -88,6 +91,7 @@ export function buildDemoState(elapsedSeconds: number): OverlayState {
       totalHealing,
       rdps: totalDamage / safeDuration,
       rhps: totalHealing / safeDuration,
+      totalDeaths,
       isActive: true,
     },
     combatants,
