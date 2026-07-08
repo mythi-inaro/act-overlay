@@ -109,7 +109,7 @@ function App() {
                       compact
                       flipResetKey={selectedFightId}
                       animateRows={configMode}
-                      onMetricChange={(metric) => setBlockMetric(block.id, metric)}
+                      onMetricChange={configMode ? (metric) => setBlockMetric(block.id, metric) : undefined}
                     />
                   </section>
                 ))}

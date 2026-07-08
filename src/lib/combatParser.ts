@@ -73,6 +73,21 @@ function mapCombatant(
     pct,
   })
 
+  const metrics = {
+    damage: snapshot(
+      parseNumber(raw.encdps ?? raw.ENCDPS),
+      damageTotal,
+      parseNumber(raw['damage%']),
+    ),
+    healing: snapshot(
+      parseNumber(raw.enchps ?? raw.ENCHPS),
+      healedTotal,
+      parseNumber(raw['healed%']),
+    ),
+    damageTaken: snapshot(0, damageTakenTotal, 0, true),
+    healsTaken: snapshot(0, healsTakenTotal, 0, true),
+  }
+
   return {
     id: key,
     name,
@@ -82,20 +97,7 @@ function mapCombatant(
       ? name === playerName || name === 'YOU'
       : Boolean(raw.isYou),
     deaths: parseNumber(raw.deaths),
-    metrics: {
-      damage: snapshot(
-        parseNumber(raw.encdps ?? raw.ENCDPS),
-        damageTotal,
-        parseNumber(raw['damage%']),
-      ),
-      healing: snapshot(
-        parseNumber(raw.enchps ?? raw.ENCHPS),
-        healedTotal,
-        parseNumber(raw['healed%']),
-      ),
-      damageTaken: snapshot(0, damageTakenTotal, 0, true),
-      healsTaken: snapshot(0, healsTakenTotal, 0, true),
-    },
+    metrics,
   }
 }
 

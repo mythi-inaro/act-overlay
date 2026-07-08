@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { clampFloatingPosition } from '../lib/floatingPanel'
 
 interface ContextMenuProps {
   x: number
@@ -8,33 +9,6 @@ interface ContextMenuProps {
   ariaLabel: string
   label?: string
   children: ReactNode
-}
-
-function clampMenuPosition(
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  padding = 8,
-): { left: number; top: number } {
-  const maxLeft = window.innerWidth - width - padding
-  const maxTop = window.innerHeight - height - padding
-
-  let left = x
-  let top = y
-
-  if (left + width > window.innerWidth - padding) {
-    left = x - width
-  }
-
-  if (top + height > window.innerHeight - padding) {
-    top = y - height
-  }
-
-  return {
-    left: Math.min(Math.max(padding, left), Math.max(padding, maxLeft)),
-    top: Math.min(Math.max(padding, top), Math.max(padding, maxTop)),
-  }
 }
 
 export function ContextMenu({ x, y, onClose, ariaLabel, label, children }: ContextMenuProps) {
@@ -46,7 +20,7 @@ export function ContextMenu({ x, y, onClose, ariaLabel, label, children }: Conte
     if (!menu) return
 
     const rect = menu.getBoundingClientRect()
-    setPosition(clampMenuPosition(x, y, rect.width, rect.height))
+    setPosition(clampFloatingPosition(x, y, rect.width, rect.height))
   }, [x, y])
 
   useEffect(() => {
