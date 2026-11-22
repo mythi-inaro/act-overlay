@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { buildDemoState } from '../lib/demoData'
 import { EMPTY_STATE, isDemoMode, parseCombatData } from '../lib/combatParser'
+import { onOverlaySocketDown } from '../lib/overlaySocket'
 import { overlayStateEqual } from '../lib/stateEquality'
 import type { EncounterState, OverlayState } from '../types/combat'
 import type {
@@ -8,6 +9,18 @@ import type {
   CombatDataEvent,
   InCombatEvent,
 } from '../types/overlayPlugin'
+
+function coerceCombatFlag(value: unknown): boolean | null {
+  if (typeof value === 'boolean') return value
+  if (typeof value === 'string') {
+    const text = value.trim().toLowerCase()
+    if (text === 'true' || text === '1') return true
+    if (text === 'false' || text === '0') return false
+  }
+  if (value === 1) return true
+  if (value === 0) return false
+  return null
+}
 
 function applyCombatPresence(
   parsed: OverlayState,
@@ -43,7 +56,7 @@ function applyCombatPresence(
 }
 
 /**
- * Subscribes to IINACT / OverlayPlugin CombatData via common.min.js.
+ * Subscribes to ACT / IINACT CombatData over OverlayPlugin's websocket.
  * In Browsingway/HUDKit, include ?OVERLAY_WS=ws://127.0.0.1:10501/ws in the overlay URL.
  */
 export function useOverlayPlugin(): {
@@ -93,13 +106,14 @@ export function useOverlayPlugin(): {
 
     const onInCombat = (data: unknown) => {
       const event = data as InCombatEvent
-      if (typeof event.inGameCombat !== 'boolean') return
+      const inGameCombat = coerceCombatFlag(event.inGameCombat)
+      if (inGameCombat === null) return
 
       const wasInCombat = inGameCombatRef.current
-      inGameCombatRef.current = event.inGameCombat
-      setInGameCombat(event.inGameCombat)
+      inGameCombatRef.current = inGameCombat
+      setInGameCombat(inGameCombat)
 
-      if (event.inGameCombat) {
+      if (inGameCombat) {
         frozenEncounterRef.current = null
         commitState({
           ...stateRef.current,
@@ -125,25 +139,32 @@ export function useOverlayPlugin(): {
       if (event.charName) playerNameRef.current = event.charName
     }
 
+    let registered = false
     const register = () => {
-      if (!window.addOverlayListener || !window.startOverlayEvents) return false
+      if (registered || !window.addOverlayListener || !window.startOverlayEvents) return registered
 
       window.addOverlayListener('CombatData', onCombatData)
       window.addOverlayListener('InCombat', onInCombat)
       window.addOverlayListener('ChangePrimaryPlayer', onPrimaryPlayer)
       window.startOverlayEvents()
+      registered = true
       return true
     }
 
+    const unsubscribeDown = onOverlaySocketDown(() => {
+      commitState({ ...stateRef.current, connected: false })
+    })
+
+    let timer = 0
     if (!register()) {
-      const timer = window.setInterval(() => {
+      timer = window.setInterval(() => {
         if (register()) window.clearInterval(timer)
       }, 100)
-
-      return () => window.clearInterval(timer)
     }
 
     return () => {
+      window.clearInterval(timer)
+      unsubscribeDown()
       window.removeOverlayListener?.('CombatData', onCombatData)
       window.removeOverlayListener?.('InCombat', onInCombat)
       window.removeOverlayListener?.('ChangePrimaryPlayer', onPrimaryPlayer)
