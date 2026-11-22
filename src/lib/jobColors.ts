@@ -26,8 +26,66 @@ const JOB_COLORS: Record<string, string> = {
   RDM: '#e87b7b',
   PCT: '#fc92e1',
   BLU: '#0068b3',
+  BST: '#c4893a',
+  // Base classes use the same swatch as the job they become.
+  GLA: '#a8d2e6',
+  MRD: '#cf2621',
+  PGL: '#d69c00',
+  LNC: '#4164cd',
+  ROG: '#af1964',
+  ARC: '#91ba5e',
+  CNJ: '#fff0dc',
+  THM: '#a579d6',
+  ACN: '#2d9b78',
   // Misc
   LB: '#c9a227',
+}
+
+/** ClassJob IDs through FFXIV patch 7.58 (Beastmaster is 43). */
+const JOB_IDS: Record<number, string> = {
+  1: 'GLA',
+  2: 'PGL',
+  3: 'MRD',
+  4: 'LNC',
+  5: 'ARC',
+  6: 'CNJ',
+  7: 'THM',
+  8: 'CRP',
+  9: 'BSM',
+  10: 'ARM',
+  11: 'GSM',
+  12: 'LTW',
+  13: 'WVR',
+  14: 'ALC',
+  15: 'CUL',
+  16: 'MIN',
+  17: 'BTN',
+  18: 'FSH',
+  19: 'PLD',
+  20: 'MNK',
+  21: 'WAR',
+  22: 'DRG',
+  23: 'BRD',
+  24: 'WHM',
+  25: 'BLM',
+  26: 'ACN',
+  27: 'SMN',
+  28: 'SCH',
+  29: 'ROG',
+  30: 'NIN',
+  31: 'MCH',
+  32: 'DRK',
+  33: 'AST',
+  34: 'SAM',
+  35: 'RDM',
+  36: 'BLU',
+  37: 'GNB',
+  38: 'DNC',
+  39: 'RPR',
+  40: 'SGE',
+  41: 'VPR',
+  42: 'PCT',
+  43: 'BST',
 }
 
 const JOB_ALIASES: Record<string, string> = {
@@ -52,8 +110,19 @@ const JOB_ALIASES: Record<string, string> = {
   REDMAGE: 'RDM',
   PICTOMANCER: 'PCT',
   BLUMAGE: 'BLU',
+  BLUEMAGE: 'BLU',
+  BEASTMASTER: 'BST',
   SAGE: 'SGE',
   LIMITBREAK: 'LB',
+  GLADIATOR: 'GLA',
+  PUGILIST: 'PGL',
+  MARAUDER: 'MRD',
+  LANCER: 'LNC',
+  ARCHER: 'ARC',
+  CONJURER: 'CNJ',
+  THAUMATURGE: 'THM',
+  ROGUE: 'ROG',
+  ARCANIST: 'ACN',
 }
 
 const FALLBACK_COLOR = '#6b7280'
@@ -76,8 +145,16 @@ function relativeLuminance(hex: string): number {
   return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
 }
 
-export function normalizeJobCode(job: string): string {
-  const cleaned = job.trim().toUpperCase().replace(/[^A-Z]/g, '')
+export function normalizeJobCode(job: unknown): string {
+  if (typeof job === 'number' && Number.isFinite(job)) {
+    return JOB_IDS[job] ?? '???'
+  }
+
+  const text = String(job ?? '').trim()
+  if (!text) return '???'
+  if (/^\d+$/.test(text)) return JOB_IDS[Number(text)] ?? '???'
+
+  const cleaned = text.toUpperCase().replace(/[^A-Z]/g, '')
   if (!cleaned) return '???'
   if (cleaned.includes('LIMIT') || cleaned === 'LB') return 'LB'
 
